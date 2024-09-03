@@ -39,19 +39,40 @@ class LinkedInNetworkingBot():
                 namelist.append(element.text)
         return namelist[0:10] 
 
-    def connect(self):
+    def connect(self, message):
         time.sleep(5)
         for name in self.peopleIdentifier():
             person = self.driver.find_element(By.XPATH, f"//*[text()='{name}']")
             person.click()
             time.sleep(2)
-            position = py.locateCenterOnScreen('ConnectButton.png', confidence = 0.8)
-            if position:
+            position_connect = py.locateCenterOnScreen('ConnectButton.png', confidence = 0.8)
+            if position_connect:
                 try:
-                    py.click(position)
+                    py.click(position_connect)
+                    time.sleep(5)
+                    position_note = py.locateCenterOnScreen('NoteButton.png', confidence = 0.8)
+                    if position_note:
+                        try:
+                            input_note = self.driver.find_element(By.ID, "custom-message")
+                            input_note.send_keys(message)
+                            position_send = py.locateCenterOnScreen('ConnectButton', confidence = 0.8)
+                            if position_send:
+                                try:
+                                    position_send.click()
+                                except ValueError as err:
+                                    print('Unable to send.')
+                                    continue
+                        except:
+                            print('No space for notes.')
+                            continue                   
                 except ValueError as err:
                     print('Unable to connect...')
                     continue
+                
+    
+    
+    
+
             
 
 Bot = LinkedInNetworkingBot("", "", wb.Firefox(), '')
